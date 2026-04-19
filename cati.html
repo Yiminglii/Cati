@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🐱 Cati - 测测你和猫的契合度</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --cat-pink:#FF6B9D;--cat-peach:#FFB5A7;--cat-cream:#FFF5E4;
+  --cat-mint:#A8E6CF;--cat-lavender:#DDA0DD;--cat-sky:#87CEEB;
+  --cat-orange:#FF8C42;--cat-purple:#9B7EDE;
+  --text-dark:#4A3728;--text-light:#7A6555;
+}
+body{font-family:'Nunito','PingFang SC','Microsoft YaHei',sans-serif;
+  background:linear-gradient(135deg,#FFF5E4 0%,#FFE4EC 50%,#E8F0FE 100%);
+  min-height:100vh;color:var(--text-dark);overflow-x:hidden;}
+.floating-decor{position:fixed;font-size:2rem;opacity:.12;pointer-events:none;animation:fFloat 7s ease-in-out infinite;z-index:0}
+@keyframes fFloat{0%,100%{transform:translateY(0)rotate(0)}50%{transform:translateY(-20px)rotate(10deg)}}
+.d1{top:8%;left:4%;font-size:2.5rem}.d2{top:18%;right:6%;animation-delay:1s}
+.d3{top:55%;left:3%;animation-delay:2s;font-size:1.8rem}.d4{top:70%;right:4%;animation-delay:3s;font-size:2.2rem}
+.d5{top:38%;left:7%;animation-delay:4s;font-size:1.5rem}.d6{bottom:12%;right:10%;animation-delay:1.5s}
+
+.page{display:none;min-height:100vh;padding:20px;position:relative;z-index:1;align-items:center;justify-content:center}
+.page.active{display:flex}
+
+/* 首页 */
+.home-page{flex-direction:column;text-align:center;padding-top:50px}
+.logo-area{margin-bottom:24px;animation:bIn .8s ease}
+.logo-cat{font-size:76px;display:block;line-height:1;filter:drop-shadow(0 4px 12px rgba(255,107,157,.3));animation:cWiggle 2.5s ease-in-out infinite}
+@keyframes cWiggle{0%,100%{transform:rotate(-3deg)}50%{transform:rotate(3deg)}}
+@keyframes bIn{0%{transform:scale(0);opacity:0}50%{transform:scale(1.15)}100%{transform:scale(1);opacity:1}}
+.title{font-size:2.8rem;font-weight:900;background:linear-gradient(135deg,var(--cat-pink),var(--cat-orange),var(--cat-purple));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:6px;letter-spacing:2px}
+.subtitle{font-size:1.08rem;color:var(--text-light);margin-bottom:32px;font-weight:600;line-height:1.6}
+.start-btn{background:linear-gradient(135deg,var(--cat-pink),var(--cat-orange));color:white;border:none;
+  padding:17px 52px;font-size:1.2rem;font-weight:800;border-radius:50px;cursor:pointer;transition:all .3s;
+  box-shadow:0 8px 28px rgba(255,107,157,.35);letter-spacing:2px;position:relative;overflow:hidden}
+.start-btn:hover{transform:translateY(-3px) scale(1.05);box-shadow:0 12px 36px rgba(255,107,157,.45)}
+.start-btn::after{content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;
+  background:linear-gradient(transparent,rgba(255,255,255,.2),transparent);transform:rotate(45deg);animation:sShine 3s infinite}
+@keyframes sShine{0%{transform:translateX(-100%) rotate(45deg)}100%{transform:translateX(100%) rotate(45deg)}}
+.home-tags{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:28px}
+.tag{background:rgba(255,255,255,.7);backdrop-filter:blur(10px);padding:6px 16px;border-radius:20px;font-size:.85rem;color:var(--text-light);font-weight:600}
+
+/* MBTI输入页 */
+.input-page{flex-direction:column;max-width:480px;width:100%;margin:0 auto;text-align:center;padding-top:30px}
+.input-card{background:rgba(255,255,255,.88);backdrop-filter:blur(20px);border-radius:28px;padding:36px 28px;
+  box-shadow:0 12px 44px rgba(255,107,157,.16);width:100%;border:2px solid rgba(255,255,255,.6)}
+.input-title{font-size:1.4rem;font-weight:900;color:var(--text-dark);margin-bottom:6px}
+.input-sub{font-size:.9rem;color:var(--text-light);margin-bottom:28px;font-weight:600}
+.dim-row{display:flex;gap:10px;margin-bottom:18px;justify-content:center}
+.dim-label{width:100%;text-align:center;font-size:.82rem;font-weight:800;color:var(--cat-pink);margin-bottom:8px;letter-spacing:1px}
+.dim-btn{flex:1;padding:14px 8px;border-radius:14px;border:2px solid #EEE5E5;background:#FAFAFA;
+  font-size:1.05rem;font-weight:800;cursor:pointer;transition:all .25s;color:var(--text-dark);font-family:inherit}
+.dim-btn:hover{border-color:var(--cat-pink);background:linear-gradient(135deg,#FFF5F8,#FFE8EE)}
+.dim-btn.selected{border-color:var(--cat-pink);background:linear-gradient(135deg,var(--cat-pink),var(--cat-lavender));
+  color:white;box-shadow:0 4px 16px rgba(255,107,157,.3);transform:scale(1.04)}
+.mbti-preview{margin:24px 0 20px;font-size:2.6rem;font-weight:900;
+  background:linear-gradient(135deg,var(--cat-pink),var(--cat-purple));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:6px;min-height:42px}
+.confirm-btn{background:linear-gradient(135deg,var(--cat-mint),var(--cat-sky));color:white;border:none;
+  padding:15px 48px;font-size:1.1rem;font-weight:800;border-radius:50px;cursor:pointer;transition:all .3s;
+  box-shadow:0 6px 20px rgba(168,230,207,.4);letter-spacing:1px;width:100%}
+.confirm-btn:hover{transform:translateY(-2px);box-shadow:0 8px 26px rgba(168,230,207,.5)}
+.confirm-btn:disabled{opacity:.4;cursor:not-allowed;transform:none}
+
+/* 答题页 */
+.quiz-page{flex-direction:column;max-width:520px;width:100%;margin:0 auto;padding-top:28px}
+.progress-bar{width:100%;height:10px;background:rgba(255,255,255,.5);border-radius:10px;overflow:hidden;
+  margin-bottom:22px;box-shadow:inset 0 2px 4px rgba(0,0,0,.05)}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--cat-pink),var(--cat-lavender));border-radius:10px;
+  transition:width .5s cubic-bezier(.34,1.56,.64,1);position:relative}
+.progress-fill::after{content:'';position:absolute;right:0;top:0;width:16px;height:100%;background:white;
+  border-radius:50%;opacity:.6;transform:translateX(50%)}
+.progress-text{text-align:center;font-weight:700;font-size:.85rem;color:var(--text-light);margin-bottom:16px}
+.question-card{background:rgba(255,255,255,.85);backdrop-filter:blur(20px);border-radius:24px;
+  padding:30px 24px;box-shadow:0 8px 32px rgba(255,107,157,.12);animation:sUp .5s ease;
+  width:100%;border:2px solid rgba(255,255,255,.6)}
+@keyframes sUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+.q-icon{font-size:2.4rem;text-align:center;margin-bottom:12px;display:block}
+.q-num{font-size:.78rem;font-weight:700;color:var(--cat-pink);margin-bottom:6px;letter-spacing:1px}
+.q-tag{display:inline-block;background:linear-gradient(135deg,rgba(255,107,157,.14),rgba(155,126,222,.14));
+  padding:4px 14px;border-radius:12px;font-size:.76rem;font-weight:700;color:var(--cat-pink);margin-bottom:8px;letter-spacing:.5px}
+.q-text{font-size:1.15rem;font-weight:800;line-height:1.5;text-align:center;margin-bottom:24px;color:var(--text-dark)}
+.options{display:flex;flex-direction:column;gap:11px}
+.option{background:linear-gradient(135deg,#FAFAFA,#F5F0F0);border:2px solid #EEE5E5;border-radius:16px;
+  padding:15px 20px;cursor:pointer;transition:all .3s;display:flex;align-items:center;gap:13px;
+  font-weight:700;font-size:.96rem;color:var(--text-dark)}
+.option:hover{border-color:var(--cat-pink);background:linear-gradient(135deg,#FFF5F8,#FFE8EE);transform:translateX(6px)}
+.option:active{transform:scale(.97)}
+.opt-icon{font-size:1.5rem;min-width:34px;text-align:center}
+.opt-letter{background:linear-gradient(135deg,var(--cat-pink),var(--cat-lavender));color:white;
+  width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-size:.82rem;font-weight:800;flex-shrink:0}
+
+/* 结果页 */
+.result-page{flex-direction:column;max-width:500px;width:100%;margin:0 auto;text-align:center;padding-top:26px}
+.result-card{background:rgba(255,255,255,.9);backdrop-filter:blur(20px);border-radius:28px;padding:34px 24px;
+  box-shadow:0 12px 44px rgba(255,107,107,.18);animation:pIn .7s cubic-bezier(.34,1.56,.64,1);
+  border:2px solid rgba(255,255,255,.6);width:100%}
+@keyframes pIn{from{opacity:0;transform:scale(.7)}to{opacity:1;transform:scale(1)}}
+.result-badge{display:inline-block;background:linear-gradient(135deg,var(--cat-pink),var(--cat-lavender));
+  color:white;padding:5px 18px;border-radius:20px;font-size:.8rem;font-weight:700;margin-bottom:14px;letter-spacing:1px}
+.match-header{display:flex;align-items:center;justify-content:center;gap:10px;margin:16px 0 8px}
+.match-type{font-size:2rem;font-weight:900;background:linear-gradient(135deg,var(--cat-pink),var(--cat-purple));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:2px}
+.match-x{font-size:1.8rem;color:var(--cat-peach);font-weight:900}
+.match-score-circle{width:120px;height:120px;border-radius:50%;margin:16px auto;display:flex;align-items:center;justify-content:center;flex-direction:column;
+  background:linear-gradient(135deg,rgba(255,107,157,.1),rgba(168,230,207,.1));border:3px solid var(--cat-pink);position:relative}
+.match-score-num{font-size:2.4rem;font-weight:900;color:var(--cat-pink);line-height:1}
+.match-score-label{font-size:.72rem;font-weight:700;color:var(--text-light);letter-spacing:1px}
+.match-level{font-size:1.1rem;font-weight:900;margin:6px 0 14px;
+  background:linear-gradient(135deg,var(--cat-orange),var(--cat-purple));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.result-cat-img{font-size:64px;margin:10px 0;display:block;animation:cWiggle 2.5s ease-in-out infinite;filter:drop-shadow(0 4px 14px rgba(0,0,0,.08))}
+.result-name{font-size:1.4rem;font-weight:900;margin-bottom:4px;color:var(--text-dark)}
+.result-slogan{font-size:.9rem;color:var(--cat-pink);font-weight:700;margin-bottom:14px;font-style:italic}
+.result-desc{font-size:.9rem;line-height:1.72;color:var(--text-light);text-align:left;background:linear-gradient(135deg,#FFF9FB,#FDF2F7);
+  padding:16px 18px;border-radius:16px;margin:14px 0;font-weight:600}
+.match-desc{font-size:.92rem;line-height:1.7;color:var(--text-light);text-align:left;background:linear-gradient(135deg,#F0FAFF,#EDF5FF);
+  padding:16px 18px;border-radius:16px;margin:14px 0;font-weight:600;border-left:4px solid var(--cat-sky)}
+.result-traits{display:flex;flex-wrap:wrap;gap:7px;justify-content:center;margin:14px 0}
+.trait-tag{background:linear-gradient(135deg,rgba(255,107,157,.12),rgba(155,126,222,.12));
+  padding:5px 13px;border-radius:12px;font-size:.8rem;font-weight:700;color:var(--text-dark)}
+.result-dimensions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:16px 0}
+.dim-item{background:#FAFAFA;padding:9px 12px;border-radius:12px;font-size:.82rem;font-weight:700}
+.dim-label{color:var(--text-light);font-size:.75rem}
+.dim-value{color:var(--cat-pink);font-size:.95rem}
+.action-btns{display:flex;gap:11px;margin-top:20px;flex-wrap:wrap;justify-content:center}
+.action-btn{padding:12px 28px;border-radius:50px;font-weight:800;font-size:.92rem;cursor:pointer;
+  border:none;transition:all .3s;letter-spacing:1px}
+.btn-retest{background:linear-gradient(135deg,var(--cat-mint),var(--cat-sky));color:white;box-shadow:0 6px 20px rgba(168,230,207,.4)}
+.btn-retest:hover{transform:translateY(-2px)}
+.btn-share{background:linear-gradient(135deg,var(--cat-pink),var(--cat-orange));color:white;box-shadow:0 6px 20px rgba(255,107,157,.4)}
+.btn-share:hover{transform:translateY(-2px)}
+.paw-print{position:fixed;font-size:24px;opacity:0;pointer-events:none;animation:pawFade 1.2s forwards;z-index:999}
+@keyframes pawFade{0%{opacity:.7;transform:scale(.5)rotate(-15deg)}100%{opacity:0;transform:scale(1.5)rotate(15deg) translateY(-30px)}}
+.confetti{position:fixed;width:10px;height:10px;top:-10px;opacity:0;z-index:998;pointer-events:none}
+@media(max-width:480px){
+  .title{font-size:2.1rem}.logo-cat{font-size:58px}.question-card{padding:22px 16px}.q-text{font-size:1.02rem}
+  .result-cat-img{font-size:52px}.result-card{padding:26px 18px}.start-btn{padding:14px 38px;font-size:1.05rem}
+  .input-card{padding:28px 20px}.match-type{font-size:1.6rem}.match-score-circle{width:100px;height:100px}
+}
+</style>
+</head>
+<body>
+<div class="floating-decor d1">🐱</div><div class="floating-decor d2">🐾</div><div class="floating-decor d3">🧶</div>
+<div class="floating-decor d4">🐟</div><div class="floating-decor d5">😺</div><div class="floating-decor d6">🎀</div>
+
+<!-- 首页 -->
+<div id="home" class="page home-page active">
+  <div class="logo-area"><span class="logo-cat">😺</span></div>
+  <h1 class="title">Cati</h1>
+  <p class="subtitle">🐱 你的MBTI ✕ 你家猫的猫型人格<br>测测你们的契合度有多高 💕</p>
+  <button class="start-btn" onclick="goToInput()">开始测试 🐾</button>
+  <div class="home-tags">
+    <span class="tag">🧡 输入你的MBTI</span><span class="tag">💜 24道猫咪题目</span><span class="tag">💚 揭秘匹配度</span>
+  </div>
+</div>
+
+<!-- 输入MBTI -->
+<div id="inputPage" class="page input-page">
+  <div class="input-card">
+    <div class="input-title">🧑 先告诉我们你的MBTI</div>
+    <div class="input-sub">选择最符合你的四个维度，不知道的话可以随便选一个~</div>
+    <style>.dim-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}</style>
+    <div class="dim-grid">
+      <div><div class="dim-label">能量来源 E / I</div>
+        <div class="dim-row" style="margin:0"><button class="dim-btn" data-dim="EI" data-val="E" onclick="selDim(this)">E 外向</button><button class="dim-btn" data-dim="EI" data-val="I" onclick="selDim(this)">I 内向</button></div></div>
+      <div><div class="dim-label">认知方式 S / N</div>
+        <div class="dim-row" style="margin:0"><button class="dim-btn" data-dim="SN" data-val="S" onclick="selDim(this)">S 实感</button><button class="dim-btn" data-dim="SN" data-val="N" onclick="selDim(this)">N 直觉</button></div></div>
+      <div><div class="dim-label">判断方式 T / F</div>
+        <div class="dim-row" style="margin:0"><button class="dim-btn" data-dim="TF" data-val="T" onclick="selDim(this)">T 思考</button><button class="dim-btn" data-dim="TF" data-val="F" onclick="selDim(this)">F 情感</button></div></div>
+      <div><div class="dim-label">生活方式 J / P</div>
+        <div class="dim-row" style="margin:0"><button class="dim-btn" data-dim="JP" data-val="J" onclick="selDim(this)">J 判断</button><button class="dim-btn" data-dim="JP" data-val="P" onclick="selDim(this)">P 感知</button></div></div>
+    </div>
+    <div class="mbti-preview" id="mbtiPreview">____</div>
+    <button class="confirm-btn" id="confirmBtn" disabled onclick="confirmMBTI()">下一步，测测你家猫 🐱</button>
+  </div>
+</div>
+
+<!-- 答题页 -->
+<div id="quiz" class="page quiz-page">
+  <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+  <div class="progress-text" id="progressText">第 1 题 / 共 24 题</div>
+  <div class="question-card" id="questionCard"></div>
+</div>
+
+<!-- 结果页 -->
+<div id="result" class="page result-page"><div class="result-card" id="resultCard"></div></div>
+
+<script>
+// ============================================================
+// 🐱 题库：60道全猫咪相关
+// CAT_POV = "如果你是一只猫..."（第一人称）
+// OBS = "你家的猫/当你...时猫会..."（观察视角）
+// ============================================================
+
+const CAT_POV=[
+// E/I ×8
+{i:"🥫",t:"🐱 猫猫第一人称",d:"EI",q:"如果你是一只猫，看见刚打开的罐头，第一反应是？",a:[{i:"⚡",t:"喵喵大叫冲过去转圈圈催开饭！",v:"E"},{i:"👀",t:"悄悄靠近先观察情况再行动",v:"I"}]},
+{i:"🚪",t:"🐱 猫猫第一人称",d:"EI",q:"如果家里来了陌生人（客人），你会？",a:[{i:"😺",t:"主动凑过去蹭人家腿展示魅力~",v:"E"},{i:"🙈",t:"躲到沙发底下暗中观察等安全了再说",v:"I"}]},
+{i:"🪟",t:"🐱 猫猫第一人称",d:"EI",q:"如果看到窗外有只鸟飞过，你会？",a:[{i:"😿",t:"咔咔咔大声喊全家人来看！！一起兴奋",v:"E"},{i:"🧘",t:"安静趴窗台上凝视...独自享受这个瞬间",v:"I"}]},
+{i:"🏥",t:"🐱 猫猫第一人称",d:"EI",q:"如果带你去宠物医院打疫苗，你会？",a:[{i:"😿",t:"全程喵喵叫个不停！让所有人知道我不开心",v:"E"},{i:"😑",t:"一声不吭缩在角落用沉默抗议",v:"I"}]},
+{i:"📦",t:"🐱 猫猫第一人称",d:"EI",q:"如果面前有个新纸箱，你会？",a:[{i:"📣",t:"钻进去探出头来喵喵叫！快看我快看我",v:"E"},{i:"📦",t:"悄悄钻进去躲着...把这里当秘密基地",v:"I"}]},
+{i:"🎉",t:"🐱 猫猫第一人称",d:"EI",q:"如果铲屎官买了新玩具回来，你会？",a:[{i:"🏃",t:"立刻冲上去玩！不管好不好玩先试试",v:"E"},{i:"🔍",t:"绕着玩具走三圈研究一下这是啥玩意儿",v:"I"}]},
+{i:"🛁",t:"🐱 猫猫第一人称",d:"EI",q:"如果被迫洗澡的时候，你会？",a:[{i:"😾",t:"疯狂挣扎+惨叫！让全世界知道我在反抗",v:"E"},{i:"💀",t:"身体僵硬一动不动用死亡眼神盯着铲屎官",v:"I"}]},
+{i:"🪞",t:"🐱 猫猫第一人称",d:"EI",q:"如果偶然看到镜子里的自己，你会？",a:[{i:"😺",t:"对着镜子又拍又叫！那只猫好可爱是谁啊",v:"E"},{i:"👁️",t:"眯眼仔细打量这家伙怎么跟我长得一样",v:"I"}]},
+// S/N ×7
+{i:"🐟",t:"🐱 猫猫第一人称",d:"SN",q:"面前有熟悉鱼干和没见过的冻干，选哪个？",a:[{i:"🐟",t:"鱼干！吃过的才靠谱新的万一不好吃",v:"S"},{i:"✨",t:"新品冻干看起来好特别想尝尝什么味道",v:"N"}]},
+{i:"🛋️",t:"🐱 猫猫第一人称",d:"SN",q:"选午睡位置你最在意的是？",a:[{i:"☀️",t:"垫子摸起来最舒服温度刚刚好",v:"S"},{i:"💭",t:"这角落感觉很有氛围能激发我的灵感",v:"N"}]},
+{i:"🎯",t:"🐱 猫猫第一人称",d:"SN",q:"铲屎官拿出了激光笔，你的策略是？",a:[{i:"💨",t:"光点在哪就追到哪专注抓住每个瞬间",v:"S"},{i:"🧠",t:"先观察光点的移动规律它在循环路线对吧",v:"N"}]},
+{i:"🍖",t:"🐱 猫猫第一人称",d:"SN",q:"铲屎官给你做了造型奇怪的饭，你会？",a:[{i:"👃",t:"先闻闻味道嗯能吃就吃吧填饱肚子要紧",v:"S"},{i:"❓",t:"这是什么为什么长这样铲屎官在想什么",v:"N"}]},
+{i:"🌙",t:"🐱 猫猫第一人称",d:"SN",q:"半夜突然精力旺盛跑酷你在想什么？",a:[{i:"🏃",t:"就是想跑从沙发到柜子到床身体需要运动",v:"S"},{i:"💫",t:"突然领悟了什么宇宙真理必须通过奔跑表达",v:"N"}]},
+{i:"🧀",t:"🐱 猫猫第一人称",d:"SN",q:"发现桌上有一块你没见过的食物，你会？",a:[{i:"👅",t:"舔一口试试看直接体验比什么都准",v:"S"},{i:"🔬",t:"先围绕它转一圈仔细分析成分和来源",v:"N"}]},
+{i:"🪑",t:"🐱 猫猫第一人称",d:"SN",q:"铲屎官换了新沙发你对它的评价基于？",a:[{i:"✋",t:"爪感如何软不软抓起来舒不舒服",v:"S"},{i:"🎨",t:"整体风格搭不搭配我的气质颜值在线吗",v:"N"}]},
+// T/F ×8
+{i:"😿",t:"🐱 猫猫第一人称",d:"TF",q:"家里另一只猫被骂了在哭（喵），你会？",a:[{i:"🤗",t:"蹭蹭ta用尾巴卷住ta安慰感情最重要",v:"F"},{i:"🧐",t:"站在旁边冷静分析ta到底做错了啥才挨骂",v:"T"}]},
+{i:"💊",t:"🐱 猫猫第一人称",d:"TF",q:"生病要吃药藏在零食里发现后你会？",a:[{i:"💔",t:"虽然吃了但委屈巴巴看着铲屎官你怎么能骗我",v:"F"},{i:"🤨",t:"行吧为了健康但下次换个口味骗我",v:"T"}]},
+{i:"🎒",t:"🐱 猫猫第一人称",d:"TF",q:"铲屎官要出差把你寄养在朋友家分别时你会？",a:[{i:"😿",t:"一直喵喵叫不肯离开视线心里超难过",v:"F"},{i:"😼",t:"淡定目送离开反正几天后就回来了",v:"T"}]},
+{i:"🩹",t:"🐱 猫猫第一人称",d:"TF",q:"不小心摔下来受伤了铲屎官很自责你会？",a:[{i:"😽",t:"蹭蹭ta表示原谅～知道你不是故意的",v:"F"},{i:"🤨",t:"是柜子太滑了不是你的错下次注意放稳一点",v:"T"}]},
+{i:"👶",t:"🐱 猫猫第一人称",d:"TF",q:"家里来了个又哭又闹的小宝宝你会？",a:[{i:"🛡️",t:"虽然吵但还是乖乖待着不想让场面更混乱",v:"F"},{i:"🚪",t:"立刻撤离现场这种低效率噪音环境不适合我",v:"T"}]},
+{i:"🎁",t:"🐱 猫猫第一人称",d:"TF",q:"过生日收到一份你不喜欢的礼物你会？",a:[{i:"💝",t:"假装开心玩两下不忍心让铲屎官失望",v:"F"},{i:"😐",t:"闻一下就走开不喜欢就是不喜欢诚实最重要",v:"T"}]},
+{i:"🐕",t:"🐱 猫猫第一人称",d:"TF",q:"邻居家狗来串门它很想跟你玩你会？",a:[{i:"🙂",t:"虽然不太想理但也不凶别把气氛搞尴尬嘛",v:"F"},{i:"😾",t:"哈它这是我地盘请你自己离开",v:"T"}]},
+{i:"🙆",t:"🐱 猫猫第一人称",d:"TF",q:"铲屎官摸你摸到你不想继续了你会？",a:[{i:"🥺",t:"轻轻推开或用温柔的动作表达不忍心伤你",v:"F"},{i:"✋",t:"直接走开或用手挡住界限分明",v:"T"}]},
+// J/P ×7
+{i:"☀️",t:"🐱 猫猫第一人称",d:"JP",q:"每天早上醒来后的固定流程是？",a:[{i:"📋",t:"伸懒腰→吃饭→去窗台→睡觉顺序不能乱",v:"J"},{i:"🎲",t:"看心情吧今天可能先去骚扰铲屎官也说不定",v:"P"}]},
+{i:"🎮",t:"🐱 猫猫第一人称",d:"JP",q:"追捕一只虫子的时候你的风格是？",a:[{i:"🎯",t:"制定战术潜伏→靠近→猛扑一击必杀",v:"J"},{i:"💨",t:"追着跑呗跑到哪算哪主打一个随缘",v:"P"}]},
+{i:"🛏️",t:"🐱 猫猫第一人称",d:"JP",q:"晚上睡哪里通常是？",a:[{i:"🛏️",t:"我的专属位置每天都是那里雷打不动",v:"J"},{i:"🌀",t:"今天沙发明天床后天也许试试铲屎官枕头",v:"P"}]},
+{i:"🧹",t:"🐱 猫猫第一人称",d:"JP",q:"刚打扫完的房间地上有根逗猫棒你会？",a:[{i:"⏳",t:"等铲屎官收好了再玩不要破坏劳动成果",v:"J"},{i:"🏃",t:"管他呢先玩再说玩完假装不知道",v:"P"}]},
+{i:"🥛",t:"🐱 猫猫第一人称",d:"JP",q:"水盆快空了你会？",a:[{i:"🔔",t:"准时走到水盆旁喵喵叫该加水了",v:"J"},{i:"💧",t:"渴了再说实在不行喝马桶盖上的水珠也行",v:"P"}]},
+{i:"🧶",t:"🐱 猫猫第一人称",d:"JP",q:"面对一堆散落的玩具你会？",a:[{i:"📦",t:"挑最喜欢的一个认真玩专注才能快乐",v:"J"},{i:"🎪",t:"每个都拨弄一下这个闻闻那个拍拍都好玩",v:"P"}]},
+{i:"🕐",t:"🐱 猫猫第一人称",d:"JP",q:"到了平时吃饭时间但铲屎官还没来你会？",a:[{i:"⏰",t:"准时走到食盆前坐好到点了就要吃饭",v:"J"},{i:"😴",t:"再等等吧或者先睡一觉饿了再去催",v:"P"}]}
+];
+
+const OBS=[
+// E/I ×8
+{i:"🚪",t:"👀 铲屎官视角",d:"EI",q:"当你下班回家开门时，你家猫通常会？",a:[{i:"🏃",t:"立刻冲到门口迎接！围着腿蹭来蹭去超热情",v:"E"},{i:"🛋",t:"慢悠悠抬起头看一眼然后继续躺着...",v:"I"}]},
+{i:"👥",t:"👀 铲屎官视角",d:"EI",q:"当有客人来访时，你家猫的反应是？",a:[{i:"😺",t:"主动凑上去求撸！给每个人都展示魅力",v:"E"},{i:"🙈",t:"直接消失或躲在暗处观察绝不露面",v:"I"}]},
+{i:"📱",t:"👀 铲屎官视角",d:"EI",q:"当你拿出手机想给它拍照时，它会？",a:[{i:"📸",t:"对着镜头摆pose甚至主动凑过来卖萌",v:"E"},{i:"🚶",t:"转身走开或者一脸嫌弃地看着你",v:"I"}]},
+{i:"🏠",t:"👀 铲屎官视角",d:"EI",q:"搬到一个新家后，你家猫适应的方式是？",a:[{i:"🗺️",t:"到处巡视每个角落都要探索一遍才放心",v:"E"},{i:"📦",t:"找一个安全的小角落躲起来慢慢适应",v:"I"}]},
+{i:"🎤",t:"👀 铲屎官视角",d:"EI",q:"当你跟它说话时，它更倾向于？",a:[{i:"💬",t:"积极回应！用各种叫声跟你交流互动",v:"E"},{i:"👂",t:"安静地听然后用眼神回应偶尔甩下尾巴",v:"I"}]},
+{i:"🍽️",t:"👀 铲屎官视角",d:"EI",q:"到吃饭时间了但它还没开饭，它会？",a:[{i:"📣",t:"跟着你走到哪跟到哪喵喵叫催催催",v:"E"},{i:"⏳",t:"安静坐在食盆前用眼神默默施压等你反应",v:"I"}]},
+{i:"🏥",t:"👀 铲屎官视角",d:"EI",q:"带它出门（去医院/体检）时它的表现是？",a:[{i:"😿",t:"一路喵喵不停对外界一切充满好奇又紧张",v:"E"},{i:"🧊",t:"缩在航空箱里一声不装死直到结束",v:"I"}]},
+{i:"✂️",t:"👀 铲屎官视角",d:"EI",q:"给它剪指甲的时候它会？",a:[{i:"😾",t:"全程剧烈反抗+惨叫让全小区都知道",v:"E"},{i:"💀",t:"身体僵住用冰冷的眼神默默承受",v:"I"}]},
+// S/N ×7
+{i:"🎁",t:"👀 铲屎官视角",d:"SN",q:"当你买个新玩具回来时，它最先关注的是？",a:[{i:"👐",t:"能不能抓能不能咬好不好玩",v:"S"},{i:"🤔",t:"这是个什么东西有什么隐藏机关吗",v:"N"}]},
+{i:"🍽️",t:"👀 铲屎官视角",d:"SN",q:"换了新牌子的猫粮，它通常？",a:[{i:"👃",t:"先闻一闻味道对不对胃口才是关键",v:"S"},{i:"❓",t:"绕着碗走三圈思考这和之前的有啥不同",v:"N"}]},
+{i:"📍",t:"👀 铲屎官视角",d:"SN",q:"你家猫选睡觉位置最看重的是？",a:[{i:"☀️",t:"这个地方够不够舒服够不够暖和",v:"S"},{i:"✨",t:"这里的光影氛围有没有艺术感",v:"N"}]},
+{i:"🔄",t:"👀 铲屎官视角",d:"SN",q:"当你改变了家具的位置它通常会？",a:[{i:"🔍",t:"仔细检查一遍确认每样东西还在不在原位",v:"S"},{i:"💭",t:"若有所思地端详新布局仿佛在解读某种信息",v:"N"}]},
+{i:"🧶",t:"👀 铲屎官视角",d:"SN",q:"它玩逗猫棒的方式更多是？",a:[{i:"⚡",t:"光点在哪追到哪简单直接享受捕捉快感",v:"S"},{i:"🧠",t:"会预判轨迹提前埋伏像个战术家",v:"N"}]},
+{i:"🪑",t:"👀 铲屎官视角",d:"SN",q:"它对新买的沙发/毯子的判断基于？",a:[{i:"✋",t:"爪感如何好不好抓舒不舒服",v:"S"},{i:"🎨",t:"颜值怎么样配不配得上本喵的气质",v:"N"}]},
+{i:"🍖",t:"👀 铲屎官视角",d:"SN",q:"给它做了一顿特别的饭它的反应是？",a:[{i:"👅",t:"上来就吃好吃就行不用想太多",v:"S"},{i:"🤨",t:"先研究一下这是啥然后决定要不要赏脸",v:"N"}]},
+// T/F ×7
+{i:"😿",t:"👀 铲屎官视角",d:"TF",q:"当你难过或不开心时，你家猫会？",a:[{i:"😽",t:"靠过来蹭你或者静静陪着你安慰你",v:"F"},{i:"🧐",t:"该干嘛干嘛但你情绪不对它会多看你几眼",v:"T"}]},
+{i:"🤒",t:"👀 铲屎官视角",d:"TF",q:"当你生病卧床时，它通常会？",a:[{i:"💕",t:"守在床边陪你寸步不离像个小护士",v:"F"},{i:"📋",t:"保持正常作息但在你能看到的地方待着",v:"T"}]},
+{i:"😾",t:"👀 铲屎官视角",d:"TF",q:"如果不小心踩到它的尾巴它会更？",a:[{i:"💔",t:"委屈地叫一声然后躲起来需要时间治愈",v:"F"},{i:"😾",t:"当场哈你或者用行动表示不满让你记住教训",v:"T"}]},
+{i:"👋",t:"👀 铲屎官视角",d:"TF",q:"你要出差几天把它托付给别人时它表现？",a:[{i:"😿",t:"明显焦虑不安甚至绝食抗议",v:"F"},{i:"😼",t:"有点不开心但很快接受现实调整状态",v:"T"}]},
+{i:"👶",t:"👀 铲屎官视角",d:"TF",q:"家里有了新成员（另一只宠物/婴儿）它态度？",a:[{i:"🛡️",t:"虽然不爽但不会主动攻击尽量和谐相处",v:"F"},{i:"⚖️",t:"先评估威胁等级再决定是接纳还是划清界限",v:"T"}]},
+{i:"💊",t:"👀 铲屎官视角",d:"TF",q:"骗它吃药成功后发现被骗了它的反应？",a:[{i:"💔",t:"用受伤的眼神看着你久久不能释怀",v:"F"},{i:"🤨",t:"冷笑一声行下次注意然后翻篇了",v:"T"}]},
+{i:"🎄",t:"👀 铲屎官视角",d:"TF",q:"过节期间家里装饰变了它的适应方式？",a:[{i:"🎀",t:"小心翼翼地避开装饰物怕碰倒了挨骂",v:"F"},{i:"🔍",t:"快速扫描一遍新布局建立新的活动路线图",v:"T"}]},
+// J/P ×8
+{i:"🕐",t:"👀 铲屎官视角",d:"JP",q:"你家猫每天吃饭时间的准点是？",a:[{i:"⏰",t:"分秒不差！晚一分钟就开始催你了",v:"J"},{i:"🎰",t:"大概那个时间段吧早一点晚一点都无所谓",v:"P"}]},
+{i:"🛏️",t:"👀 铲屎官视角",d:"JP",q:"你家猫每晚睡觉的位置通常是？",a:[{i:"📍",t:"固定的那个位子每天都在那里",v:"J"},{i:"🎲",t:"今天沙发上明天床上随心情而定",v:"P"}]},
+{i:"🧹",t:"👀 铲屎官视角",d:"JP",q:"刚收拾好的房间它会？",a:[{i:"📝",t:"保持整洁顶多在自己区域稍微活动",v:"J"},{i:"🌀",t:"十分钟内让房间恢复'猫该有的样子'",v:"P"}]},
+{i:"🎯",t:"👀 铲屎官视角",d:"JP",q:"它玩耍的风格更偏向？",a:[{i:"📋",t:"有计划性地进行比如先玩这个再玩那个",v:"J"},{i:"🎪",t:"完全随机看到啥玩啥想到啥玩啥",v:"P"}]},
+{i:"🚽",t:"👀 铲屎官视角",d:"JP",q:"关于上厕所它习惯于？",a:[{i:"🏠",t:"固定的时间和固定的猫砂盆位置",v:"J"},{i:"🎰",t:"哪个顺手上哪个时间也看心情",v:"P"}]},
+{i:"📦",t:"👀 铲屎官视角",d:"JP",q:"快递箱子拆开后它处理的方式是？",a:[{i:"📦",t:"仔细检查后放到自己的'收藏区'",v:"J"},{i:"🎊",t:"立刻钻进去然后开始疯狂撕扯破坏",v:"P"}]},
+{i:"🌙",t:"👀 铲屎官视角",d:"JP",q:"半夜它跑酷的时间和方式？",a:[{i:"📅",t:"差不多固定的时间段按固定路线跑",v:"J"},{i:"🎲",t:"随时可能开始没有任何规律可循",v:"P"}]},
+{i:"💤",t:"👀 铲屎官视角",d:"JP",q:"周末vs工作日它的作息有明显差别吗？",a:[{i:"📅",t:"几乎一样！规律就是力量",v:"J"},{i:"🎲",t:"完全看心情今天可能凌晨3点才开始嗨",v:"P"}]}
+];
+
+// ============================================================
+// 16种猫型结果
+// ============================================================
+const CT={
+  INTJ:{n:"战略猫咪 🎩",s:"「我在计划如何统治这个世界...先从这罐罐头开始」",e:"😼",c:"#4A5568",d:"你是猫界的智囊担当。总是一脸高深莫测地坐在高处俯视众生。其实你只是在盘算下一顿什么时候开饭。",g:["高冷外表热心肠","计划控","洞察力MAX","暗地里观察一切"]},
+  INTP:{n:"哲学家猫咪 🔭",s:"「如果薛定谔的盒子里装的是猫粮...」",e:"🙀",c:"#667eea",d:"永远在想'为什么'的猫。大脑里住着一整个宇宙经常发呆被误以为在思考人生。",g:["脑洞超大","好奇心爆棚","拖延症晚期","夜猫子体质"]},
+  ENTJ:{n:"CEO猫咪 👔",s:"「本喵说了算。现在给我开饭。」",e:"😾",c:"#e53e3e",d:"天生的领袖猫。家里的一切都在你的掌控之中你有强大的气场。",g:["气场两米八","决策果断","目标导向","控制欲略强"]},
+  ENTP:{n:"捣蛋鬼猫咪 😈",s:"「我只是想知道...如果把水杯推下去会怎样？」",e:"😹",c:"#ed8936",d:"家里的混乱制造机。推倒东西不是坏纯粹想看看会发生什么。可爱到让人舍不得骂。",g:["脑回路清奇","热爱辩论","恶作剧天才","口才一流"]},
+  INFJ:{n:"治愈系猫咪 💜",s:"「我知道你今天过得不好...过来让我蹭蹭你」",e:"🐱‍👤",c:"#805ad5",d:"能感知所有情绪。主人难过时安静靠旁开心时一起蹦跶内心有个温暖的小宇宙。",g:["超级敏感","共情能力MAX","温柔有深度","神秘又迷人"]},
+  INFP:{n:"梦想家猫咪 ☁️",s:"「窗外的那朵云长得好像一条小鱼干...」",e:"😸",c:"#b794f4",d:"活在童话世界的猫。每缕阳光都有故事经常望着窗外发呆追求美好讨厌冲突。",g:["浪漫主义","富有想象力","真诚善良","有点小敏感"]},
+  ENFJ:{n:"社交名媛猫咪 🎀",s:"「大家都来玩呀！没有人应该孤单！」",e:"😻",c:"#f687b3",d:"聚会C位！走到哪都是焦点不只是自己开心还热衷让每个人都融入进来。",g:["人气王","热情洋溢","照顾全局","天生领导力"]},
+  ENFP:{n:"快乐修猫咪 🌈",s:"「哇！！新的一天！！好多事要做！！好兴奋！！」",e:"🐱‍🚀",c:"#fc8181",d:"行走的快乐源泉！每天醒来像打了鸡血笑声具有传染力能让整个屋子明亮。",g:["精力无限","创意达人","乐观积极","三分钟热度"]},
+  ISTJ:{n:"规矩猫咪 📋",s:"「六点半开饭七点睡觉这是规矩。」",e:"😺",c:"#4299e1",d:"非常有原则的猫日程表严格任何破坏routine的行为都会让你不满。可靠守时说到做到。",g:["极其靠谱","有条有理","责任感强","轻微强迫症"]},
+  ISFJ:{n:"守护天使猫咪 🛡️",s:"「我一直在这里你需要我的时候回头就好。」",e:"🐱",c:"#48bb78",d:"最温柔的陪伴者默默守在主人身边从不离开会让每个人都说'我家猫最好'。",g:["温柔体贴","默默付出","细节满分","超级忠诚"]},
+  ESTJ:{n:"管家猫咪 🔑",s:"「根据我的统计本周你已经迟喂我三次了。」",e:"😼",c:"#dd6b20",d:"家里的实际管理者对一切事务了如指掌用效率和秩序维持家庭运转。",g:["效率至上","井井有条","执行力强","直言不讳"]},
+  ESFJ:{n:"暖炉猫咪 🧡",s:"「快来！我给你留了好位置！暖暖的超舒服～」",e:"😽",c:"#ed8936",d:"行走的小暖炉最大愿望让每个人都感到舒适和被爱存在本身就让世界变温暖。",g:["贴心小棉袄","合群","乐于助人","传统而温暖"]},
+  ISTP:{n:"酷盖猫咪 😎",s:"「...」",e:"😏",c:"#2d3748",d:"最酷的话不多但每个动作都帅得不行独立自主不需要任何人照顾。",g:["冷静淡定","动手能力强","独立自主","酷到没朋友"]},
+  ISFP:{n:"艺术家猫咪 🎨",s:"「这片光影...美得我想睡在上面」",e:"🐈",c:"#9f7aea",d:"对美有执念的猫睡觉位置光线最好走路姿势优雅打哈欠都有艺术感。",g:["审美在线","随性自由","敏感细腻","活在当下"]},
+  ESTP:{n:"冒险家猫咪 🎢",s:"「那个柜顶...我觉得我能跳上去看着吧！」",e:"🐱‍👓",c:"#38b2ac",d:"极限运动选手没有去不了的地方没有不敢尝试的事活力四射喜欢刺激。",g:["胆大包天","行动派","适应力强","乐天派"]},
+  ESFP:{n:"派对猫咪 🎉",s:"「大家看我！！！快看我！！！！」",e:"🎪",c:"#f56565",d:"聚会绝对主角有你就不会冷场表演欲极强快乐就是信仰。",g:["表现力MAX","活泼开朗","现充","气氛组担当"]}
+};
+
+// 匹配度计算
+function calcMatch(hm,cm){
+  let sc=0;for(let i=0;i<4;i++)if(hm[i]===cm[i])sc++;
+  const base=55+sc*8+Math.floor(Math.random()*12);
+  const score=Math.min(98,Math.max(42,base));
+  let lv,lc,md;
+  if(score>=90){lv="🌟 天生一对 Soulmates";lc="#FF6B9D";md="你们之间的默契已经超越了物种！这只猫简直是你灵魂的毛绒版化身。建议立即签订终身陪伴契约。";}
+  else if(score>=80){lv="💕 高度契合 最佳拍档";lc="#f687b3";md="你和这只猫的相处模式非常自然舒适！你们在很多方面想法一致即使偶有小摩擦也能快速化解。";}
+  else if(score>=70){lv="🐾 相互吸引 默契不错";lc="#9f7aea";md="你们的性格有相似之处也有互补的地方有时候你觉得它很懂你有时候又觉得它来自另一个星球——这正是有趣之处！";}
+  else if(score>=60){lv="🤝 和平共处 各有各的活法";lc="#4299e1";md="你们保持着一种微妙的平衡不是每时每刻都同步但各自安好互相尊重。学会欣赏对方的不同才是长久之道。";}
+  else if(score>=50){lv="😹 有趣的反差萌";lc="#ed8936";md:"说实话你们差别挺大的！但反差也是魅力所在它做一些让你无法理解的事你也做一些让它费解的事——互相围观对方的迷惑行为也挺快乐的。";}
+  else{lv="🌀 跨物种沟通挑战赛";lc="#a0aec0";md="你们基本上生活在两个平行世界...但别灰心！最有趣的组合往往诞生于最大的差异中试着用它的语言理解这个世界吧！";}
+  return{score,level:lv,levelColor:lc,matchDesc:md};
+}
+
+// 工具函数
+let cQ=0,scores={E:0,I:0,S:0,N:0,T:0,F:0,J:0,P:0},aq=[],humanMBTI='';
+function showPage(id){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.getElementById(id).classList.add('active');};
+function shuffle(a){const b=[...a];for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];}return b}
+function pickRandom(a,n){return shuffle(a).slice(0,n)}
+
+// 流程控制
+function goToInput(){showPage('inputPage')}
+const sel={EI:'',SN:'',TF:'',JP:''};
+function selDim(b){const d=b.dataset.dim,v=b.dataset.val;b.parentElement.querySelectorAll('.btn').forEach(x=>x.classList.remove('selected'));b.classList.add('selected');sel[d]=v;updPre();}
+function updPre(){const m=(sel.EI||'_')+(sel.SN||'_')+(sel.TF||'_')+(sel.JP||'_');document.getElementById('mbtiPreview').textContent=m;document.getElementById('confirmBtn').disabled=m.includes('_');}
+function confirmMBTI(){humanMBTI=sel.EI+sel.SN+sel.TF+sel.JP;startQuiz();}
+
+function startQuiz(){
+  cQ=0;scores={E:0,I:0,S:0,N:0,T:0,F:0,J:0,P:0};
+  const cQs=pickRandom(CAT_POV,12),oQs=pickRandom(OBS,12),m=[];
+  for(let i=0;i<12;i++)m.push(cQs[i],oQs[i]);
+  aq=shuffle(m);showPage('quiz');renderQ();
+}
+
+function renderQ(){
+  const q=aq[cQ],tot=aq.length;
+  document.getElementById('progressFill').style.width=(cQ/tot*100)+'%';
+  document.getElementById('progressText').textContent=`第 ${cQ+1} 题 / 共 ${tot} 题`;
+  const tg=q.t?`<div class="q-tag">${q.t}</div>`:'';
+  document.getElementById('questionCard').innerHTML=
+    `<span class="q-icon">${q.i}</span>${tg}<div class="q-num">QUESTION ${cQ+1}</div>`+
+    `<div class="q-text">${q.q}</div><div class="options">`+
+    q.a.map((o,idx)=>`<div class="option" onclick="ans('${o.v}')"><span class="opt-icon">${o.i}</span>`+
+    `<span class="opt-letter">${idx===0?'A':'B'}</span><span>${o.t}</span></div>`).join(``)+`</div>`;
+}
+
+function ans(d){scores[d]++;paw();if(cQ<aq.length-1){cQ++;renderQ();}else{showResult();}}
+
+function showResult(){
+  const cm=(scores.E>=scores.I?'E':'I')+(scores.S>=scores.N?'S':'N')+(scores.T>=scores.F?'T':'F')+(scores.J>=scores.P?'J':'P');
+  const ti=CT[cm],mt=calcMatch(humanMBTI,cm);
+  const ds=[
+    {l:'能量来源',v:scores.E>=scores.I?`外向 E(${scores.E})`:`内向 I(${scores.I})`},
+    {l:'认知方式',v:scores.S>=scores.N?`实感 S(${scores.S})`:`直觉 N(${scores.N})`},
+    {l:'判断方式',v:scores.T>=scores.F?`思考 T(${scores.T})`:`情感 F(${scores.F})`},
+    {l:'生活方式',v:scores.J>=scores.P?`判断 J(${scores.J})`:`感知 P(${scores.P})`}
+  ];
+  document.getElementById('resultCard').innerHTML=
+    `<div class="result-badge">🐱 人 × 猫 契合报告</div>
+    <div class="match-header"><span class="match-type">${humanMBTI}</span><span class="match-x">×</span><span class="match-type">${cm}</span></div>
+    <div class="match-score-circle"><div class="match-score-num">${mt.score}%</div><div class="match-score-label">契合度</div></div>
+    <div class="match-level" style="background:linear-gradient(135deg,${mt.levelColor},${mt.levelColor}88);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">${mt.level}</div>
+    <span class="result-cat-img">${ti.e}</span>
+    <div class="result-name">你家猫是：${ti.n}</div>
+    <div class="result-slogan">${ti.s}</div>
+    <div class="result-desc">${ti.d}</div>
+    <div class="match-desc"><strong>💑 关于你们的组合：</strong><br>${mt.matchDesc}</div>
+    <div class="result-traits">${ti.g.map(t=>`<span class="trait-tag">#${t}</span>`).join``}</div>
+    <div class="result-dimensions">${ds.map(d=>`<div class="dim-item"><div class="dim-label">${d.l}</div><div class="dim-value">${d.v}</div></div>`).join``}</div>
+    <div class="action-btns">
+      <button class="action-btn btn-retest" onclick="location.reload()">重新测试 🔄</button>
+      <button class="action-btn btn-share" onclick="shareR()">分享结果 📤</button></div>`;
+  showPage('result');conf();
+}
+
+function paw(){const p=document.createElement('div');p.className='paw-print';p.textContent=['🐾','😺','🐱'][Math.floor(Math.random()*3)];p.style.left=(Math.random()*70+15)+'%';p.style.top=(Math.random()*50+30)+'%';document.body.appendChild(p);setTimeout(()=>p.remove(),1200);}
+function conf(){const c=['#FF6B9D','#FFB5A7','#A8E6CF','#DDA0DD','#87CEEB','#FF8C42','#9B7EDE'];for(let i=0;i<60;i++){setTimeout(()=>{const e=document.createElement('div');e.className='confetti';e.style.left=Math.random()*100+'vw';e.style.backgroundColor=c[Math.floor(Math.random()*c.length)];e.style.borderRadius=Math.random()>.5?'50%':'2px';e.style.width=(Math.random()*8+5)+'px';e.style.height=(Math.random()*8+5)+'px';e.style.animation=`cFall ${Math.random()*2+2}s linear forwards`;e.style.opacity='1';document.body.appendChild(e);setTimeout(()=>e.remove(),4000);},i*30);}}
+const ss=document.createElement('style');ss.textContent=`@keyframes cFall{0%{transform:translateY(0)rotate(0);opacity:1}100%{transform:translateY(100vh)rotate(720deg);opacity:0}}`;document.head.appendChild(ss);
+
+function shareR(){
+  const cm=(scores.E>=scores.I?'E':'I')+(scores.S>=scores.N?'S':'N')+(scores.T>=scores.F?'T':'F')+(scores.J>=scores.P?'J':'P');
+  const ti=CT[cm],mt=calcMatch(humanMBTI,cm);
+  const t=`🐱 Cati人猫契合度测试\n我是 ${humanMBTI} × 家猫是 ${cm} (${ti.n})\n契合度：${mt.score}% ${mt.level}\n${ti.s}\n\n快来测测你和猫的契合度！`;
+  if(navigator.share)navigator.share({title:'Cati - 人猫契合度测试',text:t});
+  else navigator.clipboard.writeText(t).then(()=>alert('🐾 已复制！快分享给朋友们')).catch(()=>prompt('复制分享：',t));
+}
+</script>
+</body>
+</html>
