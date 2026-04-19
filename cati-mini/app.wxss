@@ -1,0 +1,21 @@
+/* Cati 全局样式 */
+page {
+  background: linear-gradient(135deg, #FFF5E4 0%, #FFE4EC 50%, #E8F0FE 100%);
+  min-height: 100vh;
+  font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  color: #4A3728;
+}
+
+/* CSS变量 */
+page {
+  --cat-pink: #FF6B9D;
+  --cat-peach: #FFB5A7;
+  --cat-cream: #FFF5E4;
+  --cat-mint: #A8E6CF;
+  --cat-lavender: #DDA0DD;
+  --cat-sky: #87CEEB;
+  --cat-orange: #FF8C42;
+  --cat-purple: #9B7EDE;
+  --text-dark: #4A3728;
+  --text-light: #7A6555;
+}
