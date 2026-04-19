@@ -1,0 +1,19 @@
+# Dependencies
+node_modules/
+
+# IDE
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# WorkBuddy internal
+.workbuddy/
+
+# Miniprogram
+cati-mini/miniprogram_npm/
