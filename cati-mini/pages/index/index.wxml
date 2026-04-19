@@ -1,0 +1,167 @@
+<!-- Cati 小程序 - 主页面 -->
+<view class="page-container">
+
+  <!-- ========== 首页 ========== -->
+  <view class="home-page" wx:if="{{currentPage === 'home'}}">
+    <view class="logo-area">
+      <text class="logo-cat">😺</text>
+    </view>
+    <text class="title">Cati</text>
+    <text class="subtitle">🐱 你的MBTI ✕ 你家猫的猫型人格\n测测你们的契合度有多高 💕</text>
+    <button class="start-btn" bindtap="goToInput">开始测试 🐾</button>
+    <view class="home-tags">
+      <text class="tag">🧡 输入你的MBTI</text>
+      <text class="tag">💜 24道猫咪题目</text>
+      <text class="tag">💚 揭秘匹配度</text>
+    </view>
+
+    <!-- 装饰emoji -->
+    <view class="floating-decors">
+      <text class="fdec d1">🐱</text>
+      <text class="fdec d2">🐾</text>
+      <text class="fdec d3">🧶</text>
+      <text class="fdec d4">🐟</text>
+      <text class="fdec d5">😺</text>
+      <text class="fdec d6">🎀</text>
+    </view>
+  </view>
+
+  <!-- ========== MBTI输入页 ========== -->
+  <view class="input-page" wx:if="{{currentPage === 'input'}}">
+    <view class="input-card">
+      <text class="input-title">🧑 先告诉我们你的MBTI</text>
+      <text class="input-sub">选择最符合你的四个维度，不知道的话可以随便选一个~</text>
+
+      <!-- E/I -->
+      <view class="dim-group">
+        <text class="dim-label">能量来源 E / I</text>
+        <view class="dim-row">
+          <view class="dim-btn {{selEI==='E'?'selected':''}}" data-dim="EI" data-val="E" bindtap="selectDim">
+            <text>E 外向</text>
+          </view>
+          <view class="dim-btn {{selEI==='I'?'selected':''}}" data-dim="EI" data-val="I" bindtap="selectDim">
+            <text>I 内向</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- S/N -->
+      <view class="dim-group">
+        <text class="dim-label">认知方式 S / N</text>
+        <view class="dim-row">
+          <view class="dim-btn {{selSN==='S'?'selected':''}}" data-dim="SN" data-val="S" bindtap="selectDim">
+            <text>S 实感</text>
+          </view>
+          <view class="dim-btn {{selSN==='N'?'selected':''}}" data-dim="SN" data-val="N" bindtap="selectDim">
+            <text>N 直觉</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- T/F -->
+      <view class="dim-group">
+        <text class="dim-label">判断方式 T / F</text>
+        <view class="dim-row">
+          <view class="dim-btn {{selTF==='T'?'selected':''}}" data-dim="TF" data-val="T" bindtap="selectDim">
+            <text>T 思考</text>
+          </view>
+          <view class="dim-btn {{selTF==='F'?'selected':''}}" data-dim="TF" data-val="F" bindtap="selectDim">
+            <text>F 情感</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- J/P -->
+      <view class="dim-group">
+        <text class="dim-label">生活方式 J / P</text>
+        <view class="dim-row">
+          <view class="dim-btn {{selJP==='J'?'selected':''}}" data-dim="JP" data-val="J" bindtap="selectDim">
+            <text>J 判断</text>
+          </view>
+          <view class="dim-btn {{selJP==='P'?'selected':''}}" data-dim="JP" data-val="P" bindtap="selectDim">
+            <text>P 感知</text>
+          </view>
+        </view>
+      </view>
+
+      <text class="mbti-preview">{{mbtiPreview}}</text>
+      <button class="confirm-btn" disabled="{{!canConfirm}}" bindtap="confirmMBTI">下一步，测测你家猫 🐱</button>
+    </view>
+  </view>
+
+  <!-- ========== 答题页 ========== -->
+  <view class="quiz-page" wx:if="{{currentPage === 'quiz'}}">
+    <view class="progress-bar">
+      <view class="progress-fill" style="width: {{progressPercent}}%"></view>
+    </view>
+    <text class="progress-text">第 {{currentQ+1}} 题 / 共 {{totalQ}} 题</text>
+
+    <view class="question-card">
+      <text class="q-icon">{{currentQuestion.icon}}</text>
+      <view class="q-tag" wx:if="{{currentQuestion.tag}}"><text>{{currentQuestion.tag}}</text></view>
+      <text class="q-num">QUESTION {{currentQ+1}}</text>
+      <text class="q-text">{{currentQuestion.text}}</text>
+
+      <view class="options">
+        <view class="option" wx:for="{{currentQuestion.options}}" wx:key="value"
+              data-value="{{item.value}}" bindtap="selectAnswer">
+          <text class="opt-icon">{{item.icon}}</text>
+          <view class="opt-letter"><text>{{index===0?'A':'B'}}</text></view>
+          <text class="opt-text">{{item.text}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- ========== 结果页 ========== -->
+  <view class="result-page" wx:if="{{currentPage === 'result'}}">
+    <view class="result-card">
+      <view class="result-badge"><text>🐱 人 × 猫 契合报告</text></view>
+
+      <view class="match-header">
+        <text class="match-type">{{humanMBTI}}</text>
+        <text class="match-x">×</text>
+        <text class="match-type">{{catMBTI}}</text>
+      </view>
+
+      <view class="match-score-circle">
+        <text class="match-score-num">{{matchResult.score}}%</text>
+        <text class="match-score-label">契合度</text>
+      </view>
+
+      <text class="match-level" style="color: {{matchResult.levelColor}}">{{matchResult.level}}</text>
+
+      <text class="result-cat-img">{{catTypeData.emoji}}</text>
+      <text class="result-name">你家猫是：{{catTypeData.name}}</text>
+      <text class="result-slogan">{{catTypeData.slogan}}</text>
+
+      <view class="result-desc">
+        <text>{{catTypeData.desc}}</text>
+      </view>
+
+      <view class="match-desc">
+        <text class="md-title">💑 关于你们的组合：</text>\n
+        <text>{{matchResult.matchDesc}}</text>
+      </view>
+
+      <view class="result-traits">
+        <view class="trait-tag" wx:for="{{catTypeData.traits}}" wx:key="*this">
+          <text>#{{item}}</text>
+        </view>
+      </view>
+
+      <view class="result-dimensions">
+        <view class="dim-item" wx:for="{{dimensions}}" wx:key="label">
+          <text class="dim-lbl">{{item.label}}</text>
+          <text class="dim-val">{{item.value}}</text>
+        </view>
+      </view>
+
+      <view class="action-btns">
+        <button class="action-btn btn-retest" bindtap="reTest">重新测试 🔄</button>
+        <button class="action-btn btn-share" open-type="share">分享结果 📤</button>
+      </view>
+    </view>
+  </view>
+
+</view>
